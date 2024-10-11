@@ -17,8 +17,7 @@ namespace Sequence
             Running,
             Done,
             Stopping,
-            Stopped,
-            Paused
+            Stopped
         }
         public SequenceState State { get; protected set; } = SequenceState.Ready;
         public Dictionary<string, object> Payload { get; set; } = null;

@@ -323,9 +323,12 @@ namespace Sequence
                     OnStopping?.Invoke(this, new SequenceCoreProcEventArgs(Name, null));
                     _stopResult = StopProcess?.Invoke(this, Payload);
 
-                    foreach (var currentUnit in _sequences[CurrentUnitsIndex])
+                    for (int i = 0; i <= CurrentUnitsIndex; i++)
                     {
-                        currentUnit.Stop();
+                        foreach (var unit in _sequences[i])
+                        {
+                            unit.Stop();
+                        }
                     }
                 }
             }
