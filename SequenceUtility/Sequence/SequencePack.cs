@@ -18,9 +18,9 @@ namespace Sequence
         public int CurrentUnitsIndex { get; private set; }
 
         public SequencePack(string name,
-                            Func<SequenceCore, Dictionary<string, object>, SequenceResult> startCondition = null,
-                            Func<SequenceCore, Dictionary<string, object>, SequenceResult> finishCondition = null,
-                            Func<SequenceCore, Dictionary<string, object>, SequenceResult> stopProcess = null,
+                            SequenceCore.SequenceCondition startCondition = null,
+                            SequenceCore.SequenceCondition finishCondition = null,
+                            SequenceCore.SequenceCondition stopProcess = null,
                             object packSyncRoot = null,
                             object payloadSyncRoot = null)
         {

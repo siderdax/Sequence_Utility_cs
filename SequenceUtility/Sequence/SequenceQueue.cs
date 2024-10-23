@@ -33,9 +33,9 @@ namespace SequenceUtility.Sequence
         private readonly object _nextCallerSyncRoot = new();
 
         public SequenceQueue(string name, int maxSequenceCount,
-                             Func<SequenceCore, Dictionary<string, object>, SequenceResult> startCondition = null,
-                             Func<SequenceCore, Dictionary<string, object>, SequenceResult> finishCondition = null,
-                             Func<SequenceCore, Dictionary<string, object>, SequenceResult> stopProcess = null,
+                             SequenceCore.SequenceCondition startCondition = null,
+                             SequenceCore.SequenceCondition finishCondition = null,
+                             SequenceCore.SequenceCondition stopProcess = null,
                              object packSyncRoot = null,
                              object payloadSyncRoot = null)
         {
@@ -175,7 +175,10 @@ namespace SequenceUtility.Sequence
                                     _runningSequences.Remove(currentSequence);
                                 }
 
-                                result = t.Result;
+                                var qResult = t.Result;
+
+                                result.Success = qResult.Success;
+                                result.Messages = qResult.Messages;
 
                                 if (!result.Success)
                                 {
@@ -208,6 +211,18 @@ namespace SequenceUtility.Sequence
                         if (StopSignal > 0)
                         {
                             State = SequenceState.Stopped;
+
+                            if (StopSignal == 1)
+                            {
+                                var fcResult = FinishCondition(this, Payload);
+
+                                if (!fcResult.Success)
+                                {
+                                    OnStopped?.Invoke(this, new SequenceCoreProcEventArgs(Name, fcResult));
+                                    OnFinished?.Invoke(this, new SequenceCoreProcEventArgs(Name, fcResult));
+                                    return fcResult;
+                                }
+                            }
 
                             if (result.Messages != null)
                                 result.Messages = result.Messages.Concat(
@@ -327,10 +342,10 @@ namespace SequenceUtility.Sequence
             }
         }
 
-        public SequenceUnit CreateNextCaller(SequenceCore currentSequence, SequenceCore intermission = null)
+        public SequenceUnit CreateNextCaller(string name, SequenceCore intermission = null)
         {
             return new SequenceUnit(
-                name: $"{currentSequence.Name} Next Caller",
+                name: $"{name} Next Caller",
                 startCondition: (core, payload) => new SequenceResult { Success = true },
                 finishCondition: (core, payload) => new SequenceResult { Success = true },
                 workProcess: (core, payload) =>

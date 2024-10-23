@@ -15,10 +15,10 @@ namespace Sequence
         public override event EventHandler<SequenceCoreErrorEventArgs> OnErrorOccurred;
 
         public SequenceUnit(string name,
-                            Func<SequenceCore, Dictionary<string, object>, SequenceResult> startCondition,
-                            Func<SequenceCore, Dictionary<string, object>, SequenceResult> finishCondition,
-                            Func<SequenceCore, Dictionary<string, object>, SequenceResult> workProcess,
-                            Func<SequenceCore, Dictionary<string, object>, SequenceResult> stopProcess,
+                            SequenceCore.SequenceCondition startCondition,
+                            SequenceCore.SequenceCondition finishCondition,
+                            SequenceCore.SequenceCondition workProcess,
+                            SequenceCore.SequenceCondition stopProcess,
                             object unitSyncRoot,
                             object payloadSyncRoot)
         {

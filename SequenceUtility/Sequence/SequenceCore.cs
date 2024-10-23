@@ -30,10 +30,11 @@ namespace Sequence
         public abstract event EventHandler<SequenceCoreProcEventArgs> OnStopped;
         public abstract event EventHandler<SequenceCoreErrorEventArgs> OnErrorOccurred;
 
-        protected Func<SequenceCore, Dictionary<string, object>, SequenceResult> StartCondition;
-        protected Func<SequenceCore, Dictionary<string, object>, SequenceResult> FinishCondition;
-        protected Func<SequenceCore, Dictionary<string, object>, SequenceResult> WorkProcess;
-        protected Func<SequenceCore, Dictionary<string, object>, SequenceResult> StopProcess;
+        public delegate  SequenceResult SequenceCondition (SequenceCore core, Dictionary<string, object> payload);
+        protected SequenceCondition StartCondition;
+        protected SequenceCondition FinishCondition;
+        protected SequenceCondition WorkProcess;
+        protected SequenceCondition StopProcess;
 
         public abstract SequenceResult Start(Dictionary<string, object> payload);
         public abstract Task<SequenceResult> StartAsync(Dictionary<string, object> payload);
